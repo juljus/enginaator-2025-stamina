@@ -10,8 +10,9 @@ int cols[8] = {10, 11, 12, 13, A3, A2, A1, A0};
 // // original row pins
 // int rowsOrig[8] = {2, 3, 4, 5, 6, 7, 8, 9};
 
-// Forward declaration of lightLed function
+// Forward declaration functions
 void lightLed(int row, int col);
+void lightCols(int[8]);
 
 
 void setup()
@@ -27,46 +28,55 @@ void setup()
   {
     pinMode(cols[i], OUTPUT);
   }
-
 }
 
 void lightLed(int row, int col)
 {
-    // set the row pin to HIGH
-    digitalWrite(rows[row], 1);
+  // set all other row pins to LOW
+  for (int i = 0; i < 8; i++)
+  {
+      if (i != row)
+      {
+          digitalWrite(rows[i], LOW);
+      }
+  }
 
-    // set the column pin to LOW
-    digitalWrite(cols[col], 0);
+  // set all other column pins to HIGH
+  for (int i = 0; i < 8; i++)
+  {
+      if (i != col)
+      {
+          digitalWrite(cols[i], HIGH);
+      }
+  }
 
-    // set all other row pins to LOW
-    for (int i = 0; i < 8; i++)
+  // set the row pin to HIGH
+  digitalWrite(rows[row], 1);
+
+  // set the column pin to LOW
+  digitalWrite(cols[col], 0);
+}
+
+void lightCols(int cols[8])
+{
+  // iterate through the columns. then trigger a lightled for each column for each row that should be high
+
+  for (int i = 0; i < 8; i++)
+  {
+    // loop through the number of rows specified in the array
+    for (int j = 0; j < 8; j++)
     {
-        if (i != row)
-        {
-            digitalWrite(rows[i], LOW);
-        }
+      // if the column is high, light the led
+      if (j < cols[i])
+      {
+        lightLed(j, i);
+      }
     }
-
-    // set all other column pins to HIGH
-    for (int i = 0; i < 8; i++)
-    {
-        if (i != col)
-        {
-            digitalWrite(cols[i], HIGH);
-        }
-    }
-
+  }
 }
 
 void loop()
 {
-  // light every LED in the matrix one by one
-  for (int i = 0; i < 8; i++)
-  {
-    for (int j = 0; j < 8; j++)
-    {
-      lightLed(i, j);
-      delay(100); // wait for 100 milliseconds
-    }
-  }
+  int lightColsVar[8] = {7, 5, 3, 4, 8, 8, 5, 6};
+  lightCols(lightColsVar);
 }
