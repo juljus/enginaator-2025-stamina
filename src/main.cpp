@@ -64,7 +64,7 @@ void lightCols(int cols[8])
   for (int i = 0; i < 8; i++)
   {
     // loop through the number of rows specified in the array
-    for (int j = 0; j < 8; j++)
+    for (int j = 7; j > -1; j--)
     {
       // if the column is high, light the led
       if (j < cols[i])
