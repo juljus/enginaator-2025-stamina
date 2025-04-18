@@ -36,11 +36,27 @@ const unsigned long switchInterval = 500; // switch wave every 0.5 seconds
 // converts the sampling frequency into microseconds per sample:
 void captureSamples() {
   for (int i = 0; i < SAMPLES; i++) {
-    float t = (float)i / SAMPLING_FREQ; // actual time in seconds
+    // // actual time in seconds
+    // float t = (float)i / SAMPLING_FREQ;
 
-    // Simulate sine wave for a selected frequency
-    vReal[i] = 500 * sin(2 * PI * testFrequencies[currentTest] * t);
+    // // Simulate sine wave for a selected frequency
+    // vReal[i] = 500 * sin(2 * PI * testFrequencies[currentTest] * t);
+    // vImag[i] = 0;
+
+    // Read the analog value from the A5 pin
+    int rawValue = analogRead(AUDIO_PIN);
+
+    // Convert the raw value (0-1023) to a voltage (0-5V)
+    double voltage = (rawValue / 1023.0) * 5.0;
+
+    // Store the voltage in the real part of the FFT input
+    vReal[i] = voltage;
+
+    // Set the imaginary part to 0 (required for FFT)
     vImag[i] = 0;
+
+    // Wait for the appropriate sampling interval
+    delayMicroseconds(1000000 / SAMPLING_FREQ);
   }
 }
 
