@@ -106,7 +106,6 @@ void lightCols(int cols[8]) {
     for (int j = 7; j > -1; j--) {
       if (j < cols[i]) {
         lightLed(j, i);
-        delayMicroseconds(1000); // Allow LED to visibly light up
       }
     }
   }
@@ -121,23 +120,47 @@ void setup() {
 }
 
 void loop() {
-  // Change simulated wave every few seconds
-  if (millis() - lastSwitchTime > switchInterval) {
-    currentTest = (currentTest + 1) % 8;
-    lastSwitchTime = millis();
-    Serial.print("Switched to frequency: ");
-    Serial.println(testFrequencies[currentTest]);
+  // // Change simulated wave every few seconds
+  // if (millis() - lastSwitchTime > switchInterval) {
+  //   currentTest = (currentTest + 1) % 8;
+  //   lastSwitchTime = millis();
+  //   Serial.print("Switched to frequency: ");
+  //   Serial.println(testFrequencies[currentTest]);
+  // }
+
+  // captureSamples();
+  // processFFT();
+  // groupToBands();
+
+  // for (int i = 0; i < 8; i++) {
+  //   Serial.print(bars[i]);
+  //   Serial.print(" ");
+  // }
+  // Serial.println();
+
+
+  // Simulate dynamic bar heights with a sine wave pattern
+  static unsigned long lastUpdate = 0;
+  const unsigned long updateInterval = 100; // Update every 100ms
+  static float phase = 0.0; // Phase for sine wave
+
+  if (millis() - lastUpdate > updateInterval) {
+    lastUpdate = millis();
+    phase += 0.1; // Increment phase for smooth transitions
+
+    for (int i = 0; i < 8; i++) {
+      // Generate bar heights based on sine wave
+      bars[i] = map(sin(phase + i * 0.5) * 100, -100, 100, 0, 8);
+    }
+
+    // Debugging: Print the sine wave-based bar heights to the Serial Monitor
+    for (int i = 0; i < 8; i++) {
+      Serial.print(bars[i]);
+      Serial.print(" ");
+    }
+    Serial.println();
   }
 
-  captureSamples();
-  processFFT();
-  groupToBands();
-
-  for (int i = 0; i < 8; i++) {
-    Serial.print(bars[i]);
-    Serial.print(" ");
-  }
-  Serial.println();
 
   lightCols(bars);
 }
